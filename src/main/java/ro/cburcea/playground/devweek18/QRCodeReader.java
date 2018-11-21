@@ -36,7 +36,7 @@ import static ro.cburcea.playground.devweek18.Utils.convertMultipartToFile;
 
 public class QRCodeReader {
 
-    public static String decodeQRCode(InputStream qrCodeimage) throws IOException {
+    public static String decodeQRCode(InputStream qrCodeimage) {
         long startTime = currentTimeMillis();
         try {
             BufferedImage bufferedImage = ImageIO.read(qrCodeimage);
@@ -45,8 +45,8 @@ public class QRCodeReader {
 
             long endTime = currentTimeMillis();
             out.println("ZXING loadImage process time: " + (endTime - startTime) + MILLISECONDS);
-            long startTime2 = currentTimeMillis();
 
+            long startTime2 = currentTimeMillis();
             Result result = new com.google.zxing.qrcode.QRCodeReader().decode(bitmap);
             long endTime2 = currentTimeMillis();
             out.println("ZXING alg process time: " + (endTime2 - startTime2) + MILLISECONDS);
@@ -61,8 +61,6 @@ public class QRCodeReader {
     }
 
     public static Map<String, StockExchangeAlgorithm.TradePair> processZipFile(MultipartFile zip) {
-        long decodeProcessTime = 0;
-        long stockExchangeProcessTime = 0;
         Map<String, StockExchangeAlgorithm.TradePair> result = new ConcurrentHashMap<>();
         ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -79,12 +77,11 @@ public class QRCodeReader {
             e.printStackTrace();
         }
 
-        out.println("getDecodedQRCode alg: process time " + decodeProcessTime + MILLISECONDS);
-        out.println("stockExchange alg: process time  " + stockExchangeProcessTime + MILLISECONDS);
         pool.shutdown();
         try {
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
+            pool.shutdownNow();
         }
         return result;
     }

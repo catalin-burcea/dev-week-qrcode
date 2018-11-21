@@ -39,7 +39,7 @@ class QRCodeDecoderTask implements Runnable {
             e.printStackTrace();
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("getDecodedQRCode process time: " + (endTime - startTime) + MILLISECONDS);
+        out.println("QRCodeDecoderTask process time: " + (endTime - startTime) + MILLISECONDS);
 
     }
 } 
