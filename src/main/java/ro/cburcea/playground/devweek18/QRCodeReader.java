@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
-import static ro.cburcea.playground.devweek18.Utils.*;
+import static ro.cburcea.playground.devweek18.Utils.MILLISECONDS;
+import static ro.cburcea.playground.devweek18.Utils.convertMultipartToFile;
 
 public class QRCodeReader {
 
@@ -43,7 +45,6 @@ public class QRCodeReader {
 
             long endTime = currentTimeMillis();
             out.println("ZXING loadImage process time: " + (endTime - startTime) + MILLISECONDS);
-
             long startTime2 = currentTimeMillis();
 
             Result result = new com.google.zxing.qrcode.QRCodeReader().decode(bitmap);
@@ -88,38 +89,38 @@ public class QRCodeReader {
         return result;
     }
 
-    public static Map<String, StockExchangeAlgorithm.TradePair> processZipFileInputStream(MultipartFile zip) {
-        Map<String, StockExchangeAlgorithm.TradePair> result = new ConcurrentHashMap<>();
-        ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-        try {
-            File file = convertMultipartToFile(zip);
-
-            try (FileOutputStream outputStream = new FileOutputStream(file.getCanonicalPath())) {
-                ZipInputStream is;
-                ZipEntry entry;
-                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-                    is = new ZipInputStream(bis);
-                    out.println("available" + is.available());
-                    ZipEntry entry2 = is.getNextEntry();
-                    while ((entry = is.getNextEntry()) != null) {
-                        FileInputStream stream = new FileInputStream(entry.getName());
-
-                        String decodedQRCode = QRCodeReader.decodeQRCode(stream);
-                        out.println("file name: " + entry.getName() + "; decodedQRCode: " + decodedQRCode);
-                        if (decodedQRCode != null) { // && decodedQRCode.matches("^([0-9]+(.)?[0-9]+( )?)+$")
-                            String[] decodedInput = decodedQRCode.split(" ");
-                            double[] decodedInputAsDoubles = getDoubleArray(decodedInput);
-                            result.put(entry.getName(), StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles));
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    public static Map<String, StockExchangeAlgorithm.TradePair> processZipFileInputStream(MultipartFile zip) {
+//        Map<String, StockExchangeAlgorithm.TradePair> result = new ConcurrentHashMap<>();
+//        ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//
+//            try {
+//            File file = convertMultipartToFile(zip);
+//
+//            try (FileOutputStream outputStream = new FileOutputStream(file.getCanonicalPath())) {
+//                ZipInputStream is;
+//                ZipEntry entry;
+//                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+//                    is = new ZipInputStream(bis);
+//                    out.println("available" + is.available());
+//                    ZipEntry entry2 = is.getNextEntry();
+//                    while ((entry = is.getNextEntry()) != null) {
+//                        FileInputStream stream = new FileInputStream(entry.getName());
+//
+//                        String decodedQRCode = QRCodeReader.decodeQRCode(stream);
+//                        out.println("file name: " + entry.getName() + "; decodedQRCode: " + decodedQRCode);
+//                        if (decodedQRCode != null) { // && decodedQRCode.matches("^([0-9]+(.)?[0-9]+( )?)+$")
+//                            String[] decodedInput = decodedQRCode.split(" ");
+//                            double[] decodedInputAsDoubles = getValidDoubleArray(decodedInput);
+//                            result.put(entry.getName(), StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles));
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
     public static String decodeQRCodeBoofCV() {
         long startTime = currentTimeMillis();

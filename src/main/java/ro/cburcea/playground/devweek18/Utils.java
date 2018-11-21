@@ -22,11 +22,19 @@ public class Utils {
     }
 
 
-    public static double[] getDoubleArray(String[] decodedInput) {
+    public static double[] getValidDoubleArray(String[] decodedInput) {
         double[] result = new double[decodedInput.length];
-        for (int i = 0; i < decodedInput.length; i++) {
-            result[i] = Double.parseDouble(decodedInput[i]);
+        try {
+            for (int i = 0; i < decodedInput.length; i++) {
+                result[i] = Double.parseDouble(decodedInput[i]);
+                if (result[i] <= 0) {
+                    return null;
+                }
+            }
+        } catch (NumberFormatException e) {
+            return null;
         }
+
         return result;
     }
 

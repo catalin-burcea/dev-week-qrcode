@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 import static java.lang.System.out;
 import static ro.cburcea.playground.devweek18.Utils.MILLISECONDS;
-import static ro.cburcea.playground.devweek18.Utils.getDoubleArray;
+import static ro.cburcea.playground.devweek18.Utils.getValidDoubleArray;
 
 class QRCodeDecoderTask implements Runnable {
 
@@ -30,8 +30,10 @@ class QRCodeDecoderTask implements Runnable {
 
             if (decodedQRCode != null /*&& decodedQRCode.matches("^([0-9]+(.)?[0-9]+( )?)+$")*/) {
                 String[] decodedInput = decodedQRCode.split(" ");
-                double[] decodedInputAsDoubles = getDoubleArray(decodedInput);
-                result.put(entry.getName(), StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles));
+                double[] decodedInputAsDoubles = getValidDoubleArray(decodedInput);
+                if(decodedInputAsDoubles != null) {
+                    result.put(entry.getName(), StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
