@@ -3,6 +3,7 @@ package ro.cburcea.playground.devweek18;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,11 @@ import static ro.cburcea.playground.devweek18.Utils.MILLISECONDS;
 
 @RestController
 public class MainController {
+
+    @GetMapping(path = "/hello", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<String> sayHello() {
+        return new ResponseEntity<>("hello", HttpStatus.OK);
+    }
 
     @PostMapping(path = "/stockExchange", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Map<String, StockExchangeAlgorithm.TradePair>> decodeQrCode(@RequestParam("file") MultipartFile zip) {
