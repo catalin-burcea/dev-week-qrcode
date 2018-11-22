@@ -12,12 +12,12 @@ public class StockExchangeAlgorithm {
 
         for (int i = list.length - 2; i >= 0; i--) {
             if (list[i] > tradePair.sellPoint) {
-                tradePair.sellPoint = list[i];
+                tradePair.setSellPoint(list[i]);
             } else {
                 double diff = tradePair.sellPoint - list[i];
                 if (diff > maxDiff) {
                     maxDiff = diff;
-                    tradePair.buyPoint = list[i];
+                    tradePair.setBuyPoint(list[i]);
                 }
             }
         }
@@ -29,13 +29,13 @@ public class StockExchangeAlgorithm {
             return null;
         }
 
-        TradePair tradePair = new TradePair(list[0], list[1]);
-        double maxDiff = list[1] - list[0];
+        TradePair tradePair = new TradePair(-1, -1);
+        double maxDiff = -1;
         for (int i = 0; i < list.length; i++) {
             for (int j = i + 2; j < list.length; j++) {
                 if (list[j] - list[i] > maxDiff) {
-                    tradePair.buyPoint = list[i];
-                    tradePair.sellPoint = list[j];
+                    tradePair.setBuyPoint(list[i]);
+                    tradePair.setSellPoint(list[j]);
                     maxDiff = list[j] - list[i];
                 }
             }

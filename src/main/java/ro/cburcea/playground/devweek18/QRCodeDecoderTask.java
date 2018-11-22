@@ -31,8 +31,11 @@ class QRCodeDecoderTask implements Runnable {
             if (decodedQRCode != null /*&& decodedQRCode.matches("^([0-9]+(.)?[0-9]+( )?)+$")*/) {
                 String[] decodedInput = decodedQRCode.split(" ");
                 double[] decodedInputAsDoubles = getValidDoubleArray(decodedInput);
-                if(decodedInputAsDoubles != null) {
-                    result.put(entry.getName(), StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles));
+                if (decodedInputAsDoubles != null) {
+                    StockExchangeAlgorithm.TradePair pair = StockExchangeAlgorithm.stockExchangeN2(decodedInputAsDoubles);
+                    if (pair.getBuyPoint() != -1 && pair.getSellPoint() != -1) {
+                        result.put(entry.getName(), pair);
+                    }
                 }
             }
         } catch (IOException e) {
